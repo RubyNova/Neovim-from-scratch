@@ -3,6 +3,9 @@ if not status_ok then
   return
 end
 
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 local setup = {
   plugins = {
     marks = true, -- shows a list of your marks on ' and `
@@ -14,7 +17,7 @@ local setup = {
     -- the presets plugin, adds help for a bunch of default keybindings in Neovim
     -- No actual key bindings are created
     presets = {
-      operators = false, -- adds help for operators like d, y, ... and registers them for motion / text object completion
+      operators = true, -- adds help for operators like d, y, ... and registers them for motion / text object completion
       motions = true, -- adds help for motions
       text_objects = true, -- help for text objects triggered after entering an operator
       windows = true, -- default bindings on <c-w>
@@ -55,8 +58,8 @@ local setup = {
     spacing = 3, -- spacing between columns
     align = "left", -- align columns left, center or right
   },
-  ignore_missing = true, -- enable this to hide mappings for which you didn't specify a label
-  hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " }, -- hide mapping boilerplate
+  ignore_missing = false, -- enable this to hide mappings for which you didn't specify a label
+  hidden = { "<silent>", "<cmd>", "<cmd>", "<CR>", "call", "lua", "^:", "^ " }, -- hide mapping boilerplate
   show_help = true, -- show help message on the command line when the popup is visible
   triggers = "auto", -- automatically setup triggers
   -- triggers = {"<leader>"} -- or specify a list manually
@@ -69,32 +72,26 @@ local setup = {
   },
 }
 
-local opts = {
-  mode = "n", -- NORMAL mode
-  prefix = "<leader>",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = true, -- use `silent` when creating keymaps
-  noremap = true, -- use `noremap` when creating keymaps
-  nowait = true, -- use `nowait` when creating keymaps
-}
+which_key.setup(setup)
 
-local mappings = {
-  ["a"] = { "<cmd>Alpha<cr>", "Alpha" },
-  ["b"] = {
+-- Space keybindings
+which_key.register({
+  a = { "<cmd>Alpha<cr>", "Alpha" },
+  b = {
     "<cmd>lua require('telescope.builtin').buffers(require('telescope.themes').get_dropdown{previewer = false})<cr>",
     "Buffers",
   },
-  ["e"] = { "<cmd>NvimTreeToggle<cr>", "Explorer" },
-  ["w"] = { "<cmd>w!<CR>", "Save" },
-  ["q"] = { "<cmd>q!<CR>", "Quit" },
-  ["c"] = { "<cmd>Bdelete!<CR>", "Close Buffer" },
-  ["h"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
-  ["f"] = {
+  e = { "<cmd>NvimTreeToggle<cr>", "Explorer" },
+  n = { "<cmd>NvimTreeFindFile<cr>", "Find File in Explorer" },
+  w = { "<cmd>w!<CR>", "Save" },
+  q = { "<cmd>q!<CR>", "Quit" },
+  c = { "<cmd>Bdelete!<CR>", "Close Buffer" },
+  f = {
     "<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown{previewer = false})<cr>",
-    "Find files",
+    "Find Files",
   },
-  ["F"] = { "<cmd>Telescope live_grep theme=ivy<cr>", "Find Text" },
-  ["P"] = { "<cmd>lua require('telescope').extensions.projects.projects()<cr>", "Projects" },
+  F = { "<cmd>Telescope live_grep theme=ivy<cr>", "Find Text" },
+  P = { "<cmd>lua require('telescope').extensions.projects.projects()<cr>", "Projects" },
 
   p = {
     name = "Packer",
@@ -132,11 +129,11 @@ local mappings = {
     name = "LSP",
     a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
     d = {
-      "<cmd>Telescope lsp_document_diagnostics<cr>",
+      "<cmd>Telescope diagnostics bufnr=0<cr>",
       "Document Diagnostics",
     },
     w = {
-      "<cmd>Telescope lsp_workspace_diagnostics<cr>",
+      "<cmd>Telescope diagnostics<cr>",
       "Workspace Diagnostics",
     },
     f = { "<cmd>lua vim.lsp.buf.formatting()<cr>", "Format" },
@@ -181,7 +178,140 @@ local mappings = {
     h = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", "Horizontal" },
     v = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", "Vertical" },
   },
-}
+}, {
+  mode = "n",
+  prefix = "<leader>",
+  buffer = nil,
+  silent = true,
+  noremap = true,
+  nowait = true,
+})
 
-which_key.setup(setup)
-which_key.register(mappings, opts)
+-- Normal mode
+which_key.register({
+  ["<C-Up>"] = { "<cmd>resize -2<CR>", "Resize window -2" },
+  ["<C-Down>"] = { "<cmd>resize +2<CR>", "Resize window +2" },
+  ["<C-Left>"] = { "<cmd>vertical resize -2<CR>", "Vertical resize window -2" },
+  ["<C-Right>"] = { "<cmd>vertical resize +2<CR>", "Vertical resize window +2" },
+
+  ["<C-h>"] = { "<C-W>h", "Left one window" },
+  ["<C-j>"] = { "<C-W>j", "Up one window" },
+  ["<C-k>"] = { "<C-W>k", "Down one window" },
+  ["<C-l>"] = { "<C-W>l", "Right one window" },
+
+  ["<S-l>"] = { "<cmd>bnext<CR>", "Next buffer" },
+  ["<S-h>"] = { "<cmd>bprevious<CR>", "Previous buffer" },
+
+  ["<A-j>"] = { "<Esc><cmd>m .+1<CR>==", "Move line down" },
+  ["<A-k>"] = { "<Esc><cmd>m .-2<CR>==", "Move line up" },
+
+  ["\\\\"] = { "<cmd>HopChar2<CR>", "Hop 2 chars" },
+  ["\\s"] = { "<cmd>HopChar2<CR>", "Hop 2 chars" },
+  ["\\w"] = { "<cmd>HopWord<CR>", "Hop word" },
+  ["\\f"] = { "<cmd>HopChar1CurrentLineAC<CR>", "Hop 1 char right" },
+  ["\\F"] = { "<cmd>HopChar1CurrentLineBC<CR>", "Hop 1 char left" },
+
+  ["Y"] = { "y$", "Yank to the end of the line" },
+  ["`"] = { "<cmd>exe \"normal i\" . nr2char(getchar())<CR>", "Insert one character" },
+  ["<bs>"] = { "<cmd>noh<return>", "Clear search highlighting" },
+  [",o"] = { "<cmd>exe \"normal O\"<CR>", "Insert empty line above" },
+  [",r"] = { "<C-R>", "Redo last change" },
+  [",vb"] = { "<C-V>", "Visual block mode" },
+
+  [",."] = { "<C-U>", "Scroll up" },
+  [",/"] = { "<C-D>", "Scroll down" },
+  [",]"] = { "<C-]>", "Jump to tag" },
+  [",["] = { "<C-T>", "Pop tag from stack" },
+  [",lD"] = { "[<C-D>", "Jump to first macro definition of word" },
+  [",ld"] = { "]<C-D>", "Jump to next macro definition of word" },
+  [",lI"] = { "[<C-I>", "Jump to first line containing word" },
+  [",li"] = { "]<C-I>", "Jump to next line containing word" },
+
+  [",w"] = { name = "Window" },
+  [",w,"] = { "<C-W>-", "Decrease window height" },
+  [",w."] = { "<C-W>+", "Increase window height" },
+  [",w<lt>"] = { "<C-W><lt>", "Decrease window width" },
+  [",w>"] = { "<C-W>>", "Increase window width" },
+  [",w<bar>"] = { "<C-W><bar>", "Maximize window width" },
+  [",w="] = { "<C-W>=", "Make windows equally high and wide" },
+  [",wH"] = { "<C-W>H", "Move current window to left" },
+  [",wJ"] = { "<C-W>J", "Move current window to bottom" },
+  [",wK"] = { "<C-W>K", "Move current window to top" },
+  [",wL"] = { "<C-W>L", "Move current window to right" },
+  [",wR"] = { "<C-W>R", "Rotate windows upwards/leftwards" },
+  [",w_"] = { "<C-W>_", "Maximize window height" },
+  [",wa"] = { "<C-^>", "Edit alternate buffer in current window" },
+  [",wc"] = { "<C-W>c", "Close current window" },
+  [",wh"] = { "<C-W>h", "Left one window" },
+  [",wj"] = { "<C-W>j", "Up one window" },
+  [",wk"] = { "<C-W>k", "Down one window" },
+  [",wl"] = { "<C-W>l", "Right one window" },
+  [",wn"] = { "<C-W><C-W>", "Next window" },
+  [",wo"] = { "<C-W>o", "Make current window the only one" },
+  [",wp"] = { "<C-W>W", "Previous window" },
+  [",wr"] = { "<C-W>r", "Rotate windows downwards/rightwards" },
+  [",wx"] = { "<C-W>x", "Exchange current window with next" },
+}, {
+  mode = "n",
+  buffer = nil,
+  silent = true,
+  noremap = true,
+  nowait = true,
+})
+
+-- Visual and select mode
+which_key.register({
+  ["<lt>"] = { "<lt>gv", "Decrease indent" },
+  [">"] = { ">gv", "Increase indent" },
+  ["al"] = { ":<C-u>norm!0v$<CR>", "Yank a line" },
+  ["il"] = { ":<C-u>norm!^vg_<CR>", "Yank inner line" },
+  -- ["<A-j>"] = { ":m .+1<CR>==", "Move block down" },
+  -- ["<A-k>"] = { ":m .-2<CR>==", "Move block up" },
+  ["p"] = { '"_dP', "Paste" },
+}, {
+  mode = "v",
+  buffer = nil,
+  silent = true,
+  noremap = true,
+  nowait = true,
+})
+
+-- Operator pending mode
+which_key.register({
+  ["al"] = { "<cmd>norm val<CR>", "a line" },
+  ["il"] = { "<cmd>norm vil<CR>", "inner line" },
+}, {
+  mode = "o",
+  buffer = nil,
+  silent = true,
+  noremap = true,
+  nowait = true,
+})
+
+-- Terminal mode
+which_key.register({
+  ["<C-h>"] = { "<C-\\><C-N><C-w>h", "Left" },
+  ["<C-j>"] = { "<C-\\><C-N><C-w>j", "Down" },
+  ["<C-k>"] = { "<C-\\><C-N><C-w>k", "Up" },
+  ["<C-l>"] = { "<C-\\><C-N><C-w>l", "Right" },
+}, {
+  mode = "t",
+  buffer = nil,
+  silent = true,
+  noremap = false,
+  nowait = true,
+})
+
+-- Visual mode
+which_key.register({
+  ["J"] = { ":m '>+1<CR>gv-gv", "Move down" },
+  ["K"] = { ":m '<-2<CR>gv-gv", "Move up" },
+  ["<A-j>"] = { ":m '>+1<CR>gv-gv", "Move down" },
+  ["<A-k>"] = { ":m '<-2<CR>gv-gv", "Move up" },
+}, {
+  mode = "x",
+  buffer = nil,
+  silent = true,
+  noremap = true,
+  nowait = true,
+})
