@@ -65,20 +65,22 @@ end
 lualine.setup({
 	options = {
 		icons_enabled = true,
-		theme = "auto",
+
+		theme = "onedark",
 		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
 		disabled_filetypes = { "alpha", "dashboard", "NvimTree", "Outline" },
 		always_divide_middle = true,
 	},
 	sections = {
-		lualine_a = { branch, diagnostics },
-		lualine_b = { mode },
-		lualine_c = {},
+		lualine_a = { branch },
+		lualine_b = { diagnostics },
+		lualine_c = { mode },
+		lualine_d = {},
 		-- lualine_x = { "encoding", "fileformat", "filetype" },
 		lualine_x = { diff, spaces, "encoding", filetype },
-		lualine_y = { location },
-		lualine_z = { progress },
+		--lualine_y = { location },
+		--lualine_z = { progress },
 	},
 	inactive_sections = {
 		lualine_a = {},

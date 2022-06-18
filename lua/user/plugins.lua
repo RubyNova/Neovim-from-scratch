@@ -63,6 +63,12 @@ return packer.startup(function(use)
   -- use "lunarvim/colorschemes" -- A bunch of colorschemes you can try out
   use "lunarvim/darkplus.nvim"
 
+  -- onedark
+  use "navarasu/onedark.nvim"
+  
+  -- Debug Adapter Protocol
+  use 'mfussenegger/nvim-dap'
+
   -- cmp plugins
   use "hrsh7th/nvim-cmp" -- The completion plugin
   use "hrsh7th/cmp-buffer" -- buffer completions
